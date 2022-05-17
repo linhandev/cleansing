@@ -8,6 +8,7 @@ from io import BytesIO
 from tqdm import tqdm
 import os
 import os.path as osp
+import xml.etree.ElementTree as ET
 
 api_key = "d4be5b6e28bcec5f10e61dac50103d0d"
 api_secret = "888d638c47509b6d"
@@ -15,54 +16,77 @@ flickr = flickrapi.FlickrAPI(api_key, api_secret)
 
 # keyword = "bicycle"
 for keyword in ["bicycle"]:
-    photos = flickr.walk(
-        text=keyword, tag_mode="all", tags=keyword, extras="url_c", sort="relevance", per_page=2000
+    photos = flickr.photos.search(
+        text=keyword,
+        tag_mode="all",
+        tags=keyword + ",HD",
+        extras="url_c",
+        sort="relevance",
+        per_page=500,
+        page=80,
+        content_type=1,
     )
-    # print(photos)
 
-    save_dir = osp.join('data', keyword)
-    dir_exists = os.path.isdir(save_dir)
-    if not dir_exists:
-        os.mkdir(save_dir)
+    save_dir = osp.join("data", keyword)
+    if not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
         print("Making directory %s" % save_dir)
     else:
         print("Will store images in directory %s" % save_dir)
-
 
     import warnings
 
     nimage = 1500
     i = 0
     size = 256
-    for photo in tqdm(photos):
-        url = photo.get("url_c")
-        if not (url is None):
-            response = requests.get(url)
-            file = BytesIO(response.content)
-
-            # Read image from file
-            img = skimage.io.imread(file)
-
-            # Resize images
-
-            img = skimage.transform.resize(img, (size, size), mode="constant")
-
-            # Convert to uint8, suppress the warning about the precision loss
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                im2 = skimage.img_as_ubyte(img)
-
-            # Save the image
-            # if i < 1000:
-            #     save_dir = f"train/{dir_name}"
-            # else:
-            #     save_dir = f"test/{dir_name}"
+    for page in photos:
+        for photo in tqdm(page):
+            res = flickr.photos.getSizes(photo_id=photo.get("id"))
+            sizes = []
+            for size in res.findall("./sizes/size"):
+                try:
+                    sizes.append((int(size.get("height")), size.get("source")))
+                except:
+                    pass
+            sizes.sort(key=lambda s: s[0], reverse=True)
+            if sizes[0][0] < 1024:
+                continue
+            print([s[0] for s in sizes])
             
-            local_name = "{0:s}/{1:s}_{2:04d}.jpg".format(save_dir, i)
+            for size in sizes:
+                if size[0] < 1024:
+                    url = size[1]
+                    break
             
-            skimage.io.imsave(local_name, im2)
 
-            i = i + 1
-            
-        if i >= nimage:
-            break
+            if url is not None:
+                response = requests.get(url)
+                file = BytesIO(response.content)
+
+                # Read image from file
+                img = skimage.io.imread(file)
+
+                # Resize images
+                # print(img)
+                s = img.shape
+                print(s)
+                if len(s) != 3:
+                    continue
+
+                img = skimage.transform.resize(
+                    img, (512, 512), order=1, mode="constant", anti_aliasing=True
+                )
+
+                # Convert to uint8, suppress the warning about the precision loss
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore")
+                    img = skimage.img_as_ubyte(img)
+
+                save_path = osp.join(save_dir, f"{keyword}_{str(i).zfill(5)}.png")
+
+                skimage.io.imsave(save_path, img)
+
+                i = i + 1
+
+            if i >= nimage:
+                break

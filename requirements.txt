@@ -1,2 +1,5 @@
 imagehash
 pillow
+pyopencl
+SSIM-PIL
+paddlepaddle-gpu
