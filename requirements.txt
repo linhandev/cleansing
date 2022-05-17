@@ -3,3 +3,5 @@ pillow
 pyopencl
 SSIM-PIL
 paddlepaddle-gpu
+flickrapi
+scikit-image
