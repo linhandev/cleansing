@@ -86,12 +86,13 @@ def get_digest(dataset_path, hashes=["phash"], hash_weights=[1], pca_thresh=0.9,
                     img_paths_cluster[cluster_idx].append(path)
     for idx in range(cluster_number):
         img_paths_cluster[idx].sort()
-    print(f"The whole dataset is divided to {cluster_number} parts.")
-    for cluster_idx in range(cluster_number):
-        print(f"Images in part {cluster_idx}")
-        for path in img_paths_cluster[cluster_idx]:
-            print(path, end=" ")
-        print()
+    if cluster_number != 1:
+        print(f"The whole dataset is divided to {cluster_number} parts.")
+        for cluster_idx in range(cluster_number):
+            print(f"Images in part {cluster_idx}")
+            for path in img_paths_cluster[cluster_idx]:
+                print(path, end=" ")
+            print()
 
     max_distance = 0
     for hash_idx, hash_name in enumerate(hashes):

@@ -42,8 +42,8 @@ python -m cleansing.image.deduplicate --help
 Run deduplication with
 
 ```shell
-python -m cleansing.image.deduplicate --dataset_path ./data/demo --cluster_number 1 --percentage 0.88
-python -m cleansing.image.deduplicate --dataset_path ./data/demo --cluster_number 1 --thresh 0.0545
+python -m cleansing.image.deduplicate --dataset_path data/demo --cluster_number 1 --percentage 0.88
+python -m cleansing.image.deduplicate --dataset_path data/demo --cluster_number 1 --thresh 0.0545
 ```
 
 ## Deredundant
@@ -51,13 +51,13 @@ python -m cleansing.image.deduplicate --dataset_path ./data/demo --cluster_numbe
 See parameter details with
 
 ```shell
-python -m cleansing.image.deredundant -h
+python -m cleansing.image.deredundant --help
 ```
 
 Run deredundant with
 
 ```shell
-python -m cleansing.image.deredundant --dataset_path /path/to/dataset --isolation_thresh 0.9 --hashes ahash phash
+python -m cleansing.image.deredundant --dataset_path data/demo --percentage 0.1
 ```
 
 ## Identify blurry image
