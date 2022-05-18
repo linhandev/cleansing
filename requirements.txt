@@ -4,3 +4,5 @@ pyopencl
 SSIM-PIL
 flickrapi
 scikit-image
+tqdm
+imagehash

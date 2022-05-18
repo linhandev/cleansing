@@ -65,12 +65,12 @@ class MAEMetric(paddle.metric.Metric):
         self.batch_count = 0
 
     def name(self):
-        return 'MAE'
+        return "MAE"
 
     def update(self, preds, labels):
         print(type(preds), type(labels))
         self.absolute_error += (preds - labels).mean()
-    
+
     def accumulate(self):
         # 利用update中积累的成员变量数据进行计算后返回
         return self.absolute_error / self.batch_count
@@ -80,18 +80,11 @@ class MAEMetric(paddle.metric.Metric):
         self.batch_count = 0
 
 
-
 model = paddle.Model(resnet50(pretrained=False, num_classes=1))
 
 # 使用Cifar10数据集
-# train_dataset = Cifar10(mode='train', transform=Transpose())
-# val_dataset = Cifar10(mode='test', transform=Transpose())
-train_dataset = paddle.io.DataLoader(
-    Dataset("train"), batch_size=8, shuffle=True, drop_last=True
-)
-val_dataset = paddle.io.DataLoader(
-    Dataset("val"), batch_size=8, shuffle=False, drop_last=True
-)
+train_dataset = paddle.io.DataLoader(Dataset("train"), batch_size=8, shuffle=True, drop_last=True)
+val_dataset = paddle.io.DataLoader(Dataset("val"), batch_size=8, shuffle=False, drop_last=True)
 
 # 定义优化器
 optimizer = Momentum(

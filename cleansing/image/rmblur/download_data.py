@@ -14,33 +14,38 @@ api_key = "d4be5b6e28bcec5f10e61dac50103d0d"
 api_secret = "888d638c47509b6d"
 flickr = flickrapi.FlickrAPI(api_key, api_secret)
 
-# keyword = "bicycle"
-for keyword in ["bicycle"]:
-    photos = flickr.photos.search(
-        text=keyword,
-        tag_mode="all",
-        tags=keyword + ",HD",
-        extras="url_c",
-        sort="relevance",
-        per_page=500,
-        page=80,
-        content_type=1,
-    )
-
-    save_dir = osp.join("data", keyword)
-    if not os.path.isdir(save_dir):
-        os.makedirs(save_dir)
-        print("Making directory %s" % save_dir)
-    else:
-        print("Will store images in directory %s" % save_dir)
-
-    import warnings
-
-    nimage = 1500
+# "bicycle", "car",
+for keyword in [ "people", "shoe", "cat", "dog", "children"]:
+# for keyword in ["boat", "mountain", "sky", "lap top", "gpu", "monitor"]:
+    print(keyword)
     i = 0
-    size = 256
-    for page in photos:
-        for photo in tqdm(page):
+
+    for page_idx in range(10):
+        print(page_idx)
+        page = flickr.photos.search(
+            text=keyword,
+            tag_mode="all",
+            tags=keyword + ",HD",
+            extras="url_c",
+            sort="relevance",
+            per_page=500,
+            page=page_idx,
+            content_type=1,
+        )
+        # print(ET.tostring(page))
+
+        save_dir = osp.join("data", keyword)
+        if not os.path.isdir(save_dir):
+            os.makedirs(save_dir)
+            print("Making directory %s" % save_dir)
+        else:
+            print("Will store images in directory %s" % save_dir)
+
+        import warnings
+
+        size = 256
+        # print(page.findall('./photos/photo'))
+        for photo in tqdm(page.findall('./photos/photo')):
             res = flickr.photos.getSizes(photo_id=photo.get("id"))
             sizes = []
             for size in res.findall("./sizes/size"):
@@ -51,7 +56,7 @@ for keyword in ["bicycle"]:
             sizes.sort(key=lambda s: s[0], reverse=True)
             if sizes[0][0] < 1024:
                 continue
-            print([s[0] for s in sizes])
+            # print([s[0] for s in sizes])
             
             for size in sizes:
                 if size[0] < 1024:
@@ -69,7 +74,7 @@ for keyword in ["bicycle"]:
                 # Resize images
                 # print(img)
                 s = img.shape
-                print(s)
+                # print(s)
                 if len(s) != 3:
                     continue
 
@@ -87,6 +92,3 @@ for keyword in ["bicycle"]:
                 skimage.io.imsave(save_path, img)
 
                 i = i + 1
-
-            if i >= nimage:
-                break
