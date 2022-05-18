@@ -95,34 +95,33 @@ for keyword in [
                         break
 
                 if url is not None:
-                        response = requests.get(url)
-                        file = BytesIO(response.content)
+                    response = requests.get(url)
+                    file = BytesIO(response.content)
 
-                        # Read image from file
+                    # Read image from file
+                    img = skimage.io.imread(file)
 
-                        img = skimage.io.imread(file)
+                    # Resize images
+                    s = img.shape
+                    if len(s) != 3:
+                        continue
 
-                        # Resize images
-                        s = img.shape
-                        if len(s) != 3:
-                            continue
+                    img = skimage.transform.resize(
+                        img, (512, 512), order=2, mode="constant", anti_aliasing=True
+                    )
 
-                        img = skimage.transform.resize(
-                            img, (512, 512), order=2, mode="constant", anti_aliasing=True
-                        )
+                    # Convert to uint8, suppress the warning about the precision loss
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        img = skimage.img_as_ubyte(img)
 
-                        # Convert to uint8, suppress the warning about the precision loss
-                        with warnings.catch_warnings():
-                            warnings.simplefilter("ignore")
-                            img = skimage.img_as_ubyte(img)
+                    save_path = osp.join(save_dir, f"{keyword}_{str(i).zfill(5)}.png")
 
-                        save_path = osp.join(save_dir, f"{keyword}_{str(i).zfill(5)}.png")
+                    skimage.io.imsave(save_path, img)
 
-                        skimage.io.imsave(save_path, img)
-
-                        i = i + 1
+                    i = i + 1
             except Exception as e:
                 print("error", e)
                 time.sleep(5)
-            
-            time.sleep(max(2 - (time.time() - tic), 0)) # download at most 3k6/h
+
+            time.sleep(max(2 - (time.time() - tic), 0))  # download at most 3k6/h

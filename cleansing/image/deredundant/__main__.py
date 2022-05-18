@@ -11,7 +11,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Remove redundant (outlier) images from a dataset."
     )
-    parser.add_argument("--dataset_path", type=str, help="Path to the dataset")
+    parser.add_argument("--dataset_path",  "-d", type=str, help="Path to the dataset")
     parser.add_argument(
         "--percentage",
         type=float,

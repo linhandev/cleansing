@@ -17,7 +17,7 @@ def parse_args():
     parser = argparse.ArgumentParser(
         description="Remove duplicate images from a dataset. Note that thresh and percentage can't be used at the same time!"
     )
-    parser.add_argument("--dataset_path", type=str, help="Path to the dataset")
+    parser.add_argument("--dataset_path", "-d", type=str, help="Path to the dataset")
     parser.add_argument(
         "--percentage",
         type=float,
