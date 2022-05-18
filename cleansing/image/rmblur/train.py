@@ -106,7 +106,7 @@ def train(data_dir):
     model.fit(
         train_dataset,
         val_dataset,
-        epochs=1,
+        epochs=10,
         eval_freq=1,
         log_freq=1,
         save_dir="./model/ckpt",
