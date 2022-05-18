@@ -14,9 +14,8 @@ api_key = "d4be5b6e28bcec5f10e61dac50103d0d"
 api_secret = "888d638c47509b6d"
 flickr = flickrapi.FlickrAPI(api_key, api_secret)
 
-# "bicycle", "car", "people",
-for keyword in ["shoe", "cat", "dog", "children"]:
-    # for keyword in ["boat", "mountain", "sky", "lap top", "gpu", "monitor"]:
+# "bicycle", "car", "people", "shoe", "cat", "dog", "children"
+for keyword in ["boat", "mountain", "sky", "lap top", "gpu", "monitor"]:
     print(keyword)
     i = 0
 
@@ -63,30 +62,32 @@ for keyword in ["shoe", "cat", "dog", "children"]:
                     break
 
             if url is not None:
-                response = requests.get(url)
-                file = BytesIO(response.content)
+                try: 
+                    response = requests.get(url)
+                    file = BytesIO(response.content)
 
-                # Read image from file
-                img = skimage.io.imread(file)
+                    # Read image from file
+                    
+                    img = skimage.io.imread(file)
 
-                # Resize images
-                # print(img)
-                s = img.shape
-                # print(s)
-                if len(s) != 3:
-                    continue
+                    # Resize images
+                    s = img.shape
+                    if len(s) != 3:
+                        continue
 
-                img = skimage.transform.resize(
-                    img, (512, 512), order=1, mode="constant", anti_aliasing=True
-                )
+                    img = skimage.transform.resize(
+                        img, (512, 512), order=1, mode="constant", anti_aliasing=True
+                    )
 
-                # Convert to uint8, suppress the warning about the precision loss
-                with warnings.catch_warnings():
-                    warnings.simplefilter("ignore")
-                    img = skimage.img_as_ubyte(img)
+                    # Convert to uint8, suppress the warning about the precision loss
+                    with warnings.catch_warnings():
+                        warnings.simplefilter("ignore")
+                        img = skimage.img_as_ubyte(img)
 
-                save_path = osp.join(save_dir, f"{keyword}_{str(i).zfill(5)}.png")
+                    save_path = osp.join(save_dir, f"{keyword}_{str(i).zfill(5)}.png")
 
-                skimage.io.imsave(save_path, img)
+                    skimage.io.imsave(save_path, img)
 
-                i = i + 1
+                    i = i + 1
+                except:
+                    print("error")

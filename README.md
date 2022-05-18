@@ -65,7 +65,7 @@ python -m cleansing.image.deredundant --dataset_path /path/to/dataset --isolatio
 This pipeline is based on deep learning. The dataset is prepared with images downloaded from flicker. To download a dataset run
 
 ```shell
-python noise/download_data.py
+python tool/flicker.py
 ```
 
 note that flicker api should be run with python<=3.7! Flicker have quota on number of images an account can download during an hour. Need to run this script multiple times.
