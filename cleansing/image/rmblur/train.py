@@ -55,7 +55,7 @@ class Dataset(paddle.io.Dataset):
 
         img_noise_pil = Image.fromarray(img_noise.astype("uint8"))
 
-        ssim = compare_ssim(img, img_noise_pil)
+        ssim = compare_ssim(img, img_noise_pil, GPU=False)
         label = np.clip(ssim, 0, 1).astype("float32")  # sometimes get ssim slightly larger than 1
         # print(label)
 
@@ -118,7 +118,6 @@ def train(data_dir):
 
 
 def parse_args():
-
     parser = argparse.ArgumentParser(description="Train SSIM prediction model")
     parser.add_argument("--data_dir", type=str, default="./data", help="Path to dataset")
     args = parser.parse_args()
