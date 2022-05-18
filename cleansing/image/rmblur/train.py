@@ -25,20 +25,27 @@ matplotlib.use("TkAgg")
 # (N,3,H,W), bgr
 class Dataset(paddle.io.Dataset):
     def __init__(self, data_dir, mode="train"):
-        data_paths = listdir(data_dir)
+        # data_paths = listdir(data_dir)
         self.data_paths = [osp.join(data_dir, f) for f in data_paths]
 
         if mode == "train":
             self.length = len(self.data_paths)
         elif mode == "val":
-            self.length = 100
+            self.length = min(len(self.data_paths), 100)
+        print(f"{mode} dataset contains {self.length} samples")
         # print(self.data_paths)
 
     def __getitem__(self, idx):
-        img = Image.open(self.data_paths[idx])  # hwc bgr
+        print(self.data_paths[idx])
+        img = Image.open(self.data_paths[idx]).convert("RGB")  # hwc rgb
+        print(img.size)
+        if img.size != (512, 512):
+            img = img.resize((512, 512))
+
         # img_noise = skimage.util.random_noise(np.asarray(img), mode="gaussian")
-        ksize = int(random.random() * 10)
+        ksize = int(random.random() * 10) + 1
         print(np.asarray(img).shape, ksize)
+
         img_noise = cv2.blur(np.asarray(img), (ksize, ksize))
 
         # plt.imshow(img)
@@ -48,9 +55,9 @@ class Dataset(paddle.io.Dataset):
 
         img_noise_pil = Image.fromarray(img_noise.astype("uint8"))
 
-        label = compare_ssim(img, img_noise_pil)
-        label = np.clip(label, 0, 1)  # sometimes get ssim slightly larger than 1
-        # print(label)
+        ssim = compare_ssim(img, img_noise_pil)
+        label = np.clip(ssim, 0, 1).astype("float32")  # sometimes get ssim slightly larger than 1
+        print(label)
 
         img_noise = np.transpose(img_noise, [2, 0, 1]).astype("float32")
         return (img_noise - 255 / 2) / 255, label
@@ -70,7 +77,8 @@ class MAEMetric(paddle.metric.Metric):
 
     def update(self, preds, labels):
         print(type(preds), type(labels))
-        self.absolute_error += (preds - labels).mean()
+        self.absolute_error += np.abs(preds - labels).mean()
+        self.batch_count += 1
 
     def accumulate(self):
         return self.absolute_error / self.batch_count
@@ -95,7 +103,14 @@ def train(data_dir):
     )
     model.prepare(optimizer, paddle.nn.MSELoss(), MAEMetric())
     model.fit(
-        train_dataset, val_dataset, epochs=1, batch_size=8, save_dir="./output", num_workers=8
+        train_dataset,
+        val_dataset,
+        epochs=1,
+        batch_size=1,
+        eval_freq=1,
+        log_freq=1,
+        save_dir="./model/ckpt",
+        num_workers=4,
     )
     model.save("./model/ckpt/last")
     model.save("./model/ssim", False)
@@ -104,7 +119,7 @@ def train(data_dir):
 def parse_args():
 
     parser = argparse.ArgumentParser(description="Train SSIM prediction model")
-    parser.add_argument("--data_dir", type=str, help="Path to dataset")
+    parser.add_argument("--data_dir", type=str, default="./data/demo", help="Path to dataset")
     args = parser.parse_args()
     return args
 

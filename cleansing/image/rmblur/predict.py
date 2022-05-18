@@ -16,16 +16,17 @@ def parse_args():
 
 def predict(model, img_path):
 
-    img = Image.open(img_path)  # hwc bgr
+    img = Image.open(img_path).convert("RGB")  # hwc bgr
     img = np.asarray(img)
     img = np.transpose(img, [2, 0, 1]).astype("float32")
-    img = (img - 255/2) /255
-    res = model.predict([img])
+    img = (img - 255 / 2) / 255
+    res = model.predict([np.array([img])])
     return res
+
 
 if __name__ == "__main__":
     args = parse_args()
-    
+
     model = paddle.Model(resnet50(pretrained=True, num_classes=1))
     # model.load(args.weight_path)
 

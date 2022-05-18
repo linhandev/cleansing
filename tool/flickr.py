@@ -12,11 +12,43 @@ import xml.etree.ElementTree as ET
 api_key = "d4be5b6e28bcec5f10e61dac50103d0d"
 api_secret = "888d638c47509b6d"
 flickr = flickrapi.FlickrAPI(api_key, api_secret)
+total = 0
+kw_total = 0
+i = 0
 
-# "bicycle", "car", "people", "shoe", "cat", "dog", "children", "boat", "mountain", "sky", "gpu"
-for keyword in [ "laptop", "monitor", "storm", "supermoon", "park", "yellowstone", "fish", "nature", "party", "flower"]:
-    print(keyword)
+#
+for keyword in [
+    "bicycle",
+    "car",
+    "people",
+    "shoe",
+    "cat",
+    "dog",
+    "children",
+    "boat",
+    "mountain",
+    "sky",
+    "gpu",
+    "laptop",
+    "monitor",
+    "storm",
+    "supermoon",
+    "park",
+    "yellowstone",
+    "fish",
+    "nature",
+    "party",
+    "flower",
+]:
+    total += kw_total
+    kw_total = 0
+    kw_total += i
+    print(keyword, "keyword total", kw_total, "dataset total", total)
     i = 0
+
+    save_dir = osp.join("data", keyword)
+    if not os.path.isdir(save_dir):
+        os.makedirs(save_dir)
 
     for page_idx in range(10):
         print(page_idx)
@@ -31,20 +63,11 @@ for keyword in [ "laptop", "monitor", "storm", "supermoon", "park", "yellowstone
             content_type=1,
         )
 
-        save_dir = osp.join("data", keyword)
-        if not os.path.isdir(save_dir):
-            os.makedirs(save_dir)
-            print("Making directory %s" % save_dir)
-        else:
-            print("Will store images in directory %s" % save_dir)
-
         import warnings
 
-        size = 256
-        # print(page.findall('./photos/photo'))
         for photo in tqdm(page.findall("./photos/photo")):
             tic = time.time()
-            
+
             size_res = flickr.photos.getSizes(photo_id=photo.get("id"))
             sizes = []
             for size in size_res.findall("./sizes/size"):
@@ -59,9 +82,8 @@ for keyword in [ "laptop", "monitor", "storm", "supermoon", "park", "yellowstone
             fav_res = flickr.photos.getFavorites(photo_id=photo.get("id"))
             # print(ET.tostring(fav_res))
             # print(fav_res.find("photo").get('total'))
-            if fav_res.find("photo").get('total') == 0:
+            if fav_res.find("photo").get("total") == 0:
                 continue
-            
 
             for size in sizes:
                 if size[0] < 1024:
@@ -83,7 +105,7 @@ for keyword in [ "laptop", "monitor", "storm", "supermoon", "park", "yellowstone
                         continue
 
                     img = skimage.transform.resize(
-                        img, (512, 512), order=1, mode="constant", anti_aliasing=True
+                        img, (512, 512), order=2, mode="constant", anti_aliasing=True
                     )
 
                     # Convert to uint8, suppress the warning about the precision loss
@@ -96,6 +118,6 @@ for keyword in [ "laptop", "monitor", "storm", "supermoon", "park", "yellowstone
                     skimage.io.imsave(save_path, img)
 
                     i = i + 1
-                except:
-                    print("error")
-            time.sleep(max((time.time() - tic) - 1.001, 0)) # download at most 3k6/h
+                except Exception as e:
+                    print("error", e)
+            time.sleep(max((time.time() - tic) - 1.001, 0))  # download at most 3k6/h
