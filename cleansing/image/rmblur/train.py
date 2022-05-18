@@ -77,6 +77,7 @@ class MAEMetric(paddle.metric.Metric):
 
     def update(self, preds, labels):
         # print(type(preds), type(labels))
+        print(preds, labels)
         self.absolute_error += np.abs(preds - labels).mean()
         self.batch_count += 1
 
