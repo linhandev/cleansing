@@ -93,10 +93,10 @@ def train(data_dir):
     model = paddle.Model(resnet50(pretrained=True, num_classes=1))
 
     train_dataset = paddle.io.DataLoader(
-        Dataset(data_dir, "train"), batch_size=60, shuffle=True, drop_last=True
+        Dataset(data_dir, "train"), batch_size=48, shuffle=True, drop_last=True
     )
     val_dataset = paddle.io.DataLoader(
-        Dataset(data_dir, "val"), batch_size=60, shuffle=False, drop_last=True
+        Dataset(data_dir, "val"), batch_size=48, shuffle=False, drop_last=True
     )
 
     optimizer = Momentum(
@@ -107,7 +107,6 @@ def train(data_dir):
         train_dataset,
         val_dataset,
         epochs=1,
-        batch_size=8,
         eval_freq=1,
         log_freq=1,
         save_dir="./model/ckpt",
