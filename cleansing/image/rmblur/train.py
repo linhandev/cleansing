@@ -1,4 +1,3 @@
-import os
 import random
 import cv2
 import argparse
@@ -9,11 +8,8 @@ import matplotlib.pyplot as plt
 from PIL import Image
 import paddle
 from paddle.vision.models import resnet50, vgg16, LeNet
-from paddle.vision.datasets import Cifar10
 from paddle.optimizer import Momentum
 from paddle.regularizer import L2Decay
-from paddle.nn import CrossEntropyLoss
-from paddle.metric import Accuracy
 from SSIM_PIL import compare_ssim
 
 from ..util import listdir
@@ -33,20 +29,19 @@ class Dataset(paddle.io.Dataset):
         elif mode == "val":
             self.length = min(len(self.data_paths), 100)
         print(f"{mode} dataset contains {self.length} samples")
-        # print(self.data_paths)
 
     def __getitem__(self, idx):
-        # print(self.data_paths[idx])
         img = Image.open(self.data_paths[idx]).convert("RGB")  # hwc rgb
-        # print(img.size)
+        
         if img.size != (512, 512):
             img = img.resize((512, 512))
 
         # img_noise = skimage.util.random_noise(np.asarray(img), mode="gaussian")
-        ksize = int(random.random() * 10) + 1
-        # print(np.asarray(img).shape, ksize)
-
-        img_noise = cv2.blur(np.asarray(img), (ksize, ksize))
+        if random.random() < 0.1:
+            ksize = int(random.random() * 10) + 1
+            img_noise = cv2.blur(np.asarray(img), (ksize, ksize))
+        else:
+            img_noise = np.asarray(img)
 
         # plt.imshow(img)
         # plt.show()
