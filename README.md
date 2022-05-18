@@ -20,7 +20,7 @@ Download pretrained weights for deep learning models [here](https://drive.google
 
 ```shell
 conda create -n clenasing python=3.9
-conda create -n flicker python=3.7 # flicker should be run with python<=3.7
+conda create -n flickr python=3.7 # flickr should be run with python<=3.7
 ```
 
 Then install dependencies:
@@ -60,28 +60,28 @@ Run deredundant with
 python -m cleansing.image.deredundant --dataset_path data/demo --percentage 0.1
 ```
 
-## Identify blurry image
+## Remove blurry image
 
-This pipeline is based on deep learning. The dataset is prepared with images downloaded from flicker. To download a dataset run
+This pipeline is based on deep learning. The dataset is prepared with images downloaded from flickr. To download a dataset run
 
 ```shell
-python tool/flicker.py
+python tool/flickr.py
 ```
 
-note that flicker api should be run with python<=3.7! Flicker have quota on number of images an account can download during an hour. Need to run this script multiple times.
+note that flickr api should be run with python<=3.7. Flickr limit the number of api request an account can send to 3600 per hour. May need to run this script multiple times.
 
 No preprocessing or labeling is needed. To train the model run:
 
 ```shell
-python cleansing/image/blur/train.py
+python cleansing/image/rmblur/train.py
 ```
 
-Models will be saved in `clenasing/model` folder.
+Models will be saved as `model/ssid.pdparams` folder.
 
 To run prediction on individal image run:
 
 ```shell
-python cleansing/image/blur/infer.py /path/to/the/image
+python cleansing/image/rmblur/predict.py -i /path/to/the/image
 ```
 
 To remove blurry images in a dataset run:

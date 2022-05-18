@@ -1,6 +1,5 @@
-from posixpath import dirname
+import time
 import flickrapi
-import numpy as np
 import skimage.io
 import skimage.transform
 import requests
@@ -14,8 +13,8 @@ api_key = "d4be5b6e28bcec5f10e61dac50103d0d"
 api_secret = "888d638c47509b6d"
 flickr = flickrapi.FlickrAPI(api_key, api_secret)
 
-# "bicycle", "car", "people", "shoe", "cat", "dog", "children"
-for keyword in ["boat", "mountain", "sky", "lap top", "gpu", "monitor"]:
+# "bicycle", "car", "people", "shoe", "cat", "dog", "children", "boat", "mountain", "sky", "gpu"
+for keyword in [ "laptop", "monitor", "storm", "supermoon", "park", "yellowstone", "fish", "nature", "party", "flower"]:
     print(keyword)
     i = 0
 
@@ -44,9 +43,11 @@ for keyword in ["boat", "mountain", "sky", "lap top", "gpu", "monitor"]:
         size = 256
         # print(page.findall('./photos/photo'))
         for photo in tqdm(page.findall("./photos/photo")):
-            res = flickr.photos.getSizes(photo_id=photo.get("id"))
+            tic = time.time()
+            
+            size_res = flickr.photos.getSizes(photo_id=photo.get("id"))
             sizes = []
-            for size in res.findall("./sizes/size"):
+            for size in size_res.findall("./sizes/size"):
                 try:
                     sizes.append((int(size.get("height")), size.get("source")))
                 except:
@@ -55,6 +56,12 @@ for keyword in ["boat", "mountain", "sky", "lap top", "gpu", "monitor"]:
             if sizes[0][0] < 1024:
                 continue
             # print([s[0] for s in sizes])
+            fav_res = flickr.photos.getFavorites(photo_id=photo.get("id"))
+            # print(ET.tostring(fav_res))
+            # print(fav_res.find("photo").get('total'))
+            if fav_res.find("photo").get('total') == 0:
+                continue
+            
 
             for size in sizes:
                 if size[0] < 1024:
@@ -62,12 +69,12 @@ for keyword in ["boat", "mountain", "sky", "lap top", "gpu", "monitor"]:
                     break
 
             if url is not None:
-                try: 
+                try:
                     response = requests.get(url)
                     file = BytesIO(response.content)
 
                     # Read image from file
-                    
+
                     img = skimage.io.imread(file)
 
                     # Resize images
@@ -91,3 +98,4 @@ for keyword in ["boat", "mountain", "sky", "lap top", "gpu", "monitor"]:
                     i = i + 1
                 except:
                     print("error")
+            time.sleep(max((time.time() - tic) - 1.001, 0)) # download at most 3k6/h
