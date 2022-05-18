@@ -76,7 +76,7 @@ class MAEMetric(paddle.metric.Metric):
         return "MAE"
 
     def update(self, preds, labels):
-        print(type(preds), type(labels))
+        # print(type(preds), type(labels))
         self.absolute_error += np.abs(preds - labels).mean()
         self.batch_count += 1
 
@@ -119,7 +119,7 @@ def train(data_dir):
 def parse_args():
 
     parser = argparse.ArgumentParser(description="Train SSIM prediction model")
-    parser.add_argument("--data_dir", type=str, default="./data/demo", help="Path to dataset")
+    parser.add_argument("--data_dir", type=str, default="./data", help="Path to dataset")
     args = parser.parse_args()
     return args
 
