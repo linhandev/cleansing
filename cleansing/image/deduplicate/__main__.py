@@ -33,6 +33,7 @@ def parse_args():
         "--hashes",
         type=str,
         nargs="+",
+        default=['ahash', 'phash'],
         help="the hashes to use, seperate with space, support ahash, phash, dhash, colorhash, whash-haar, whash-db4 and cnn",
     )
     parser.add_argument(
@@ -77,6 +78,7 @@ def deduplicate(dataset_path, percentage, thresh, hashes=["phash"], hash_weights
         digests_part = random.sample(digests, 1000)
     else:
         digests_part = digests
+
     dis_part = np.zeros([len(hashes), len(digests_part), len(digests_part)])
 
     for hash_idx, hash_name in enumerate(hashes):
@@ -86,6 +88,7 @@ def deduplicate(dataset_path, percentage, thresh, hashes=["phash"], hash_weights
     std_sum = np.sum(stds)
     weights = [(std_sum - std)/std_sum for std in stds]
     print(stds, std_sum, weights)
+    input("here")
     
     # 4. apply balancing weight and user specified weights to digests, combine together
     # digest_combo = []
@@ -118,3 +121,4 @@ def deduplicate(dataset_path, percentage, thresh, hashes=["phash"], hash_weights
 
 if __name__ == "__main__":
     deduplicate(**parse_args().__dict__)
+

@@ -1,3 +1,5 @@
+import subprocess
 import os
 
-os.system("git pull")
+with open(os.devnull, 'wb') as devnull:
+    subprocess.call(['git', 'pull'], stdout=devnull, stderr=devnull)
