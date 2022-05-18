@@ -111,7 +111,7 @@ def train(data_dir):
         eval_freq=1,
         log_freq=1,
         save_dir="./model/ckpt",
-        num_workers=4,
+        num_workers=8,
     )
     # model.save("./model/ckpt/last")
     model.save("./model/ssim", False)
