@@ -98,19 +98,22 @@ def get_digest(dataset_path, hashes=["phash"], hash_weights=[1], pca_thresh=0.9,
         max_distance += (norm_weights[hash_idx] * hash_weights[hash_idx]) ** 2 * digests[0][
             hash_name
         ].hash.size
+    def cluster_digest():
+        for digests, img_paths in zip(digests_cluster, img_paths_cluster):
+            yield digests, img_paths 
 
-    return digests_cluster, img_paths_cluster, max_distance
+    return cluster_digest(), max_distance
 
 
 def get_distance(
     dataset_path, hashes=["phash"], hash_weights=[1], pca_thresh=0.9, cluster_number=1
 ):
-    digests_cluster, img_paths_cluster, max_distance = get_digest(
+    cluster_digest, max_distance = get_digest(
         dataset_path, hashes, hash_weights, pca_thresh, cluster_number
     )
 
-    def cluster_info():
-        for cluster_idx, digests in enumerate(digests_cluster):
-            yield cal_distance_np(digests), img_paths_cluster[cluster_idx]
+    def cluster_distance():
+        for digests, img_paths in cluster_digest:
+            yield cal_distance_np(digests), img_paths
 
-    return cluster_info(), max_distance
+    return cluster_distance(), max_distance

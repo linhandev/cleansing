@@ -79,13 +79,13 @@ def deduplicate(
 ):
     # in each cluster, deduplicate
     to_remove = []
-    cluster_info, max_distance = get_distance(
+    cluster_distance, max_distance = get_distance(
         dataset_path, hashes, hash_weights, pca_thresh, cluster_number
     )
 
     if thresh is not None:
         thresh *= max_distance
-        for distances, img_paths_cluster in cluster_info:
+        for distances, img_paths_cluster in cluster_distance:
             to_remove_cluster = []
 
             idx_pair = np.unravel_index(np.argsort(distances, axis=None), distances.shape)
@@ -100,7 +100,7 @@ def deduplicate(
             to_remove_cluster = [img_paths_cluster[idx] for idx in to_remove_cluster]
             to_remove += to_remove_cluster
     else:
-        for distances, img_paths_cluster in cluster_info:
+        for distances, img_paths_cluster in cluster_distance:
             to_remove_number = len(img_paths_cluster) * (1 - percentage)
             idx_pair = np.unravel_index(np.argsort(distances, axis=None), distances.shape)
             to_remove_cluster = []

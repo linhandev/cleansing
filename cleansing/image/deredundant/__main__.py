@@ -9,7 +9,7 @@ import numpy as np
 
 from ..util import listdir, idxs
 from ..hash import compute_hash, cal_distance, cal_distance_np
-from ..distance import get_distance
+from ..distance import get_digest
 
 
 def parse_args():
@@ -65,7 +65,7 @@ def deredundant(
     cluster_number=1,
 ):
     to_remove = []
-    cluster_info, max_distance = get_distance(
+    digests_cluster, img_paths_cluster, max_distance = get_digest(
         dataset_path, hashes, hash_weights, pca_thresh, cluster_number
     )
 
