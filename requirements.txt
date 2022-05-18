@@ -8,3 +8,4 @@ tqdm
 imagehash
 scikit-learn
 opencv-python
+matplotlib
