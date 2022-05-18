@@ -3,38 +3,40 @@ from functools import partial
 
 import numpy as np
 import imagehash
+from .util import idxs
 
 
 def md5(img):
     return hashlib.md5(img.data).hexdigest()
 
 
+hash_size = 16
 compute_hash = {
     "md5": md5,
-    "ahash": imagehash.average_hash,
-    "phash": imagehash.phash,
-    "dhash": imagehash.dhash,
+    "ahash": partial(imagehash.average_hash, hash_size=hash_size),
+    "phash": partial(imagehash.phash, hash_size=hash_size),
+    "dhash": partial(imagehash.dhash, hash_size=hash_size),
     "colorhash": imagehash.colorhash,
-    "whash-haar": imagehash.whash,
-    "whash-db4": partial(imagehash.whash, mode="db4"),
+    "whash-haar": partial(imagehash.whash, hash_size=hash_size),
+    "whash-db4": partial(imagehash.whash, mode="db4", hash_size=hash_size),
 }
 
 # TODO: cnn
 
 
-def ids(int_or_collection):
-    if not isinstance(int_or_collection, int):
-        total_number = len(int_or_collection)
-    else:
-        total_number = int_or_collection
-    for ida in range(total_number):
-        for idb in range(ida):
-            yield ida, idb
-
-
 def cal_distance(digests, key):
     distances = np.zeros([len(digests), len(digests)])
-    for ida, idb in ids(digests):
-        dis = digests[ida][key] - digests[idb][key]
-        distances[ida][idb] = distances[idb][ida] = dis 
+    for ida, idb in idxs(digests):
+        distances[ida][idb] = distances[idb][ida] = (
+            np.sum((digests[ida][key] - digests[idb][key]) ** 2) ** 0.5
+        )
+    return distances
+
+
+def cal_distance_np(digests):
+    distances = np.zeros([len(digests), len(digests)])
+    for ida, idb in idxs(digests):
+        distances[ida][idb] = distances[idb][ida] = (
+            np.sum((digests[ida] - digests[idb]) ** 2) ** 0.5
+        )
     return distances

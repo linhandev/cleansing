@@ -61,3 +61,13 @@ def listdir(folder, filters={"exclude_prefix": ["."]}):
     files.sort()
     files = [osp.normpath(p) for p in files]
     return files
+
+
+def idxs(int_or_collection):
+    if not isinstance(int_or_collection, int):
+        total_number = len(int_or_collection)
+    else:
+        total_number = int_or_collection
+    for ida in range(total_number):
+        for idb in range(ida):
+            yield ida, idb

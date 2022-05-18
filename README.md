@@ -16,12 +16,6 @@ git clone https://github.com/linhandev/cleansing
 
 Download pretrained weights for deep learning models [here](https://drive.google.com/drive/folders/1GzYqK4idR7DuifIYhwkjFcI9BSOcVMkr?usp=sharing) and put them in `cleansing/model` folder.
 
-Please update the project, some features were being finalized when submitting this version.
-
-```shell
-git pull
-```
-
 (Optional) You can create a new environment to avoid dependency issues.
 
 ```shell
@@ -48,7 +42,8 @@ python -m cleansing.image.deduplicate --help
 Run deduplication with
 
 ```shell
-python -m cleansing.image.deduplicate --dataset_path /path/to/dataset --percentage 0.9 --hashes ahash phash
+python -m cleansing.image.deduplicate --dataset_path ./data/demo --cluster_number 1 --percentage 0.88
+python -m cleansing.image.deduplicate --dataset_path ./data/demo --cluster_number 1 --thresh 0.0545
 ```
 
 ## Deredundant

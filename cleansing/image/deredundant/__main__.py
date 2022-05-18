@@ -8,6 +8,7 @@ import numpy as np
 from ..util import listdir
 from ..hash import compute_hash, cal_distance
 
+
 def parse_args():
 
     parser = argparse.ArgumentParser(
@@ -20,7 +21,9 @@ def parse_args():
         help="percentage of images to keep. 0.9 percentage on dataset with 100 images leaves 90 after deredundant",
     )
     parser.add_argument(
-        "--thresh", type=float, help="0~1, isolation score from isolation forest will be normalized and compared with this threshold"
+        "--thresh",
+        type=float,
+        help="0~1, isolation score from isolation forest will be normalized and compared with this threshold",
     )
     parser.add_argument(
         "--hashes",
@@ -47,7 +50,7 @@ def parse_args():
     return args
 
 
-def deredundant(dataset_path, percentage, thresh,hashes=["phash"], hash_weights=[1]):
+def deredundant(dataset_path, percentage, thresh, hashes=["phash"], hash_weights=[1]):
     # 1. get all image paths
     img_dir = Path(dataset_path)
     img_paths = listdir(img_dir)
@@ -77,14 +80,16 @@ def deredundant(dataset_path, percentage, thresh,hashes=["phash"], hash_weights=
         print(dis_part[hash_idx])
     stds = dis_part.std(axis=(1, 2))
     std_sum = np.sum(stds)
-    weights = [(std_sum - std)/std_sum for std in stds]
+    weights = [(std_sum - std) / std_sum for std in stds]
     print(stds, std_sum, weights)
-    
+    digests_np = np.zeros((len(hashes), len(digests), len(digests)))
+    print(digests_np.shape)
+
+    input("here")
+
     # 4. apply balancing weight and user specified weights to digests, combine together
     # digest_combo = []
     # for digest in digests:
-
-
 
     print("\n\nstrict: ")
     for key in digests[0].keys():

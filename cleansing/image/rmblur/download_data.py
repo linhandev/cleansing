@@ -14,9 +14,9 @@ api_key = "d4be5b6e28bcec5f10e61dac50103d0d"
 api_secret = "888d638c47509b6d"
 flickr = flickrapi.FlickrAPI(api_key, api_secret)
 
-# "bicycle", "car",
-for keyword in [ "people", "shoe", "cat", "dog", "children"]:
-# for keyword in ["boat", "mountain", "sky", "lap top", "gpu", "monitor"]:
+# "bicycle", "car", "people",
+for keyword in ["shoe", "cat", "dog", "children"]:
+    # for keyword in ["boat", "mountain", "sky", "lap top", "gpu", "monitor"]:
     print(keyword)
     i = 0
 
@@ -32,7 +32,6 @@ for keyword in [ "people", "shoe", "cat", "dog", "children"]:
             page=page_idx,
             content_type=1,
         )
-        # print(ET.tostring(page))
 
         save_dir = osp.join("data", keyword)
         if not os.path.isdir(save_dir):
@@ -45,7 +44,7 @@ for keyword in [ "people", "shoe", "cat", "dog", "children"]:
 
         size = 256
         # print(page.findall('./photos/photo'))
-        for photo in tqdm(page.findall('./photos/photo')):
+        for photo in tqdm(page.findall("./photos/photo")):
             res = flickr.photos.getSizes(photo_id=photo.get("id"))
             sizes = []
             for size in res.findall("./sizes/size"):
@@ -57,12 +56,11 @@ for keyword in [ "people", "shoe", "cat", "dog", "children"]:
             if sizes[0][0] < 1024:
                 continue
             # print([s[0] for s in sizes])
-            
+
             for size in sizes:
                 if size[0] < 1024:
                     url = size[1]
                     break
-            
 
             if url is not None:
                 response = requests.get(url)

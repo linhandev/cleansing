@@ -6,3 +6,4 @@ flickrapi
 scikit-image
 tqdm
 imagehash
+scikit-learn
