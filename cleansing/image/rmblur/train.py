@@ -25,7 +25,7 @@ from ..util import listdir
 # (N,3,H,W), bgr
 class Dataset(paddle.io.Dataset):
     def __init__(self, data_dir, mode="train"):
-        # data_paths = listdir(data_dir)
+        data_paths = listdir(data_dir)
         self.data_paths = [osp.join(data_dir, f) for f in data_paths]
 
         if mode == "train":
@@ -36,15 +36,15 @@ class Dataset(paddle.io.Dataset):
         # print(self.data_paths)
 
     def __getitem__(self, idx):
-        print(self.data_paths[idx])
+        # print(self.data_paths[idx])
         img = Image.open(self.data_paths[idx]).convert("RGB")  # hwc rgb
-        print(img.size)
+        # print(img.size)
         if img.size != (512, 512):
             img = img.resize((512, 512))
 
         # img_noise = skimage.util.random_noise(np.asarray(img), mode="gaussian")
         ksize = int(random.random() * 10) + 1
-        print(np.asarray(img).shape, ksize)
+        # print(np.asarray(img).shape, ksize)
 
         img_noise = cv2.blur(np.asarray(img), (ksize, ksize))
 
@@ -57,7 +57,7 @@ class Dataset(paddle.io.Dataset):
 
         ssim = compare_ssim(img, img_noise_pil)
         label = np.clip(ssim, 0, 1).astype("float32")  # sometimes get ssim slightly larger than 1
-        print(label)
+        # print(label)
 
         img_noise = np.transpose(img_noise, [2, 0, 1]).astype("float32")
         return (img_noise - 255 / 2) / 255, label
