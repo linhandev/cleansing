@@ -43,7 +43,7 @@ for keyword in [
     total += kw_total
     kw_total = 0
     kw_total += i
-    print(keyword, "keyword total", kw_total, "dataset total", total)
+    print(keyword, ", keyword total", kw_total, ", dataset total", total)
     i = 0
 
     save_dir = osp.join("data", keyword)
@@ -51,7 +51,7 @@ for keyword in [
         os.makedirs(save_dir)
 
     for page_idx in range(10):
-        print(page_idx)
+        print("page_idx", page_idx)
         page = flickr.photos.search(
             text=keyword,
             tag_mode="all",
@@ -120,4 +120,5 @@ for keyword in [
                     i = i + 1
                 except Exception as e:
                     print("error", e)
-            time.sleep(max((time.time() - tic) - 1.001, 0))  # download at most 3k6/h
+            
+            time.sleep(max(2 - (time.time() - tic), 0)) # download at most 3k6/h

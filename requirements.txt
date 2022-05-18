@@ -7,3 +7,4 @@ scikit-image
 tqdm
 imagehash
 scikit-learn
+opencv-python
