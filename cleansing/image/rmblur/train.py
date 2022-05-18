@@ -100,14 +100,14 @@ def train(data_dir):
     )
 
     optimizer = Momentum(
-        learning_rate=0.01, momentum=0.9, weight_decay=L2Decay(1e-4), parameters=model.parameters()
+        learning_rate=0.001, momentum=0.9, weight_decay=L2Decay(1e-4), parameters=model.parameters()
     )
     model.prepare(optimizer, paddle.nn.MSELoss(), MAEMetric())
     model.fit(
         train_dataset,
         val_dataset,
         epochs=1,
-        batch_size=1,
+        batch_size=4,
         eval_freq=1,
         log_freq=1,
         save_dir="./model/ckpt",
