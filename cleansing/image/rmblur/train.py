@@ -113,7 +113,7 @@ def train(data_dir):
         save_dir="./model/ckpt",
         num_workers=4,
     )
-    model.save("./model/ckpt/last")
+    # model.save("./model/ckpt/last")
     model.save("./model/ssim", False)
 
 
