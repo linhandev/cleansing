@@ -62,7 +62,7 @@ python -m cleansing.image.deredundant -h
 Run deredundant with
 
 ```shell
-python -m cleansing.image.deredundant --dataset_path /path/to/dataset --isolation_thresh 0.9
+python -m cleansing.image.deredundant --dataset_path /path/to/dataset --isolation_thresh 0.9 --hashes ahash phash
 ```
 
 ## Identify blurry image
