@@ -77,7 +77,7 @@ def deduplicate(
     pca_thresh=0.9,
     cluster_number=1,
 ):
-    # 6. in each cluster, deduplicate
+    # in each cluster, deduplicate
     to_remove = []
     cluster_info, max_distance = get_distance(
         dataset_path, hashes, hash_weights, pca_thresh, cluster_number

@@ -10,9 +10,7 @@ from .util import listdir, idxs
 from .hash import compute_hash, cal_distance, cal_distance_np
 
 
-def get_distance(
-    dataset_path, hashes=["phash"], hash_weights=[1], pca_thresh=0.9, cluster_number=1
-):
+def get_digest(dataset_path, hashes=["phash"], hash_weights=[1], pca_thresh=0.9, cluster_number=1):
     # 1. get all image paths
     img_dir = Path(dataset_path)
     img_paths = listdir(img_dir)
@@ -69,7 +67,6 @@ def get_distance(
         pca = sklearn.decomposition.PCA(n_components=pca_thresh, svd_solver="full")
         pca.fit(digests_comb)
         digests_comb = pca.transform(digests_comb)
-    
 
     # 5. partation dataset
     if cluster_number <= 1:
@@ -95,14 +92,25 @@ def get_distance(
         for path in img_paths_cluster[cluster_idx]:
             print(path, end=" ")
         print()
-    
+
     max_distance = 0
     for hash_idx, hash_name in enumerate(hashes):
         max_distance += (norm_weights[hash_idx] * hash_weights[hash_idx]) ** 2 * digests[0][
             hash_name
         ].hash.size
-    
+
+    return digests_cluster, img_paths_cluster, max_distance
+
+
+def get_distance(
+    dataset_path, hashes=["phash"], hash_weights=[1], pca_thresh=0.9, cluster_number=1
+):
+    digests_cluster, img_paths_cluster, max_distance = get_digest(
+        dataset_path, hashes, hash_weights, pca_thresh, cluster_number
+    )
+
     def cluster_info():
         for cluster_idx, digests in enumerate(digests_cluster):
             yield cal_distance_np(digests), img_paths_cluster[cluster_idx]
+
     return cluster_info(), max_distance
