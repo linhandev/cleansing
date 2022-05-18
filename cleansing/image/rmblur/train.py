@@ -93,10 +93,10 @@ def train(data_dir):
     model = paddle.Model(resnet50(pretrained=True, num_classes=1))
 
     train_dataset = paddle.io.DataLoader(
-        Dataset(data_dir, "train"), batch_size=8, shuffle=True, drop_last=True
+        Dataset(data_dir, "train"), batch_size=32, shuffle=True, drop_last=True
     )
     val_dataset = paddle.io.DataLoader(
-        Dataset(data_dir, "val"), batch_size=8, shuffle=False, drop_last=True
+        Dataset(data_dir, "val"), batch_size=32, shuffle=False, drop_last=True
     )
 
     optimizer = Momentum(
