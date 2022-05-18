@@ -18,9 +18,9 @@ from SSIM_PIL import compare_ssim
 
 from ..util import listdir
 
-import matplotlib
+# import matplotlib
 
-matplotlib.use("TkAgg")
+# matplotlib.use("TkAgg")
 
 # (N,3,H,W), bgr
 class Dataset(paddle.io.Dataset):
