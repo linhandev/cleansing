@@ -84,14 +84,14 @@ class MAEMetric(paddle.metric.Metric):
         self.batch_count = 0
 
 
-def train(data_dir):
+def train(data_dir, batch_size=32):
     model = paddle.Model(resnet50(pretrained=True, num_classes=1))
 
     train_dataset = paddle.io.DataLoader(
-        Dataset(data_dir, "train"), batch_size=32, shuffle=True, drop_last=True
+        Dataset(data_dir, "train"), batch_size=batch_size, shuffle=True, drop_last=True
     )
     val_dataset = paddle.io.DataLoader(
-        Dataset(data_dir, "val"), batch_size=32, shuffle=False, drop_last=True
+        Dataset(data_dir, "val"), batch_size=batch_size, shuffle=False, drop_last=True
     )
 
     optimizer = Momentum(
@@ -101,19 +101,20 @@ def train(data_dir):
     model.fit(
         train_dataset,
         val_dataset,
-        epochs=10,
+        epochs=1,
         eval_freq=1,
         log_freq=1,
         save_dir="./model/ckpt",
         num_workers=8,
     )
-    # model.save("./model/ckpt/last")
     model.save("./model/ssim", False)
 
 
 def parse_args():
     parser = argparse.ArgumentParser(description="Train SSIM prediction model")
-    parser.add_argument("--data_dir", type=str, default="./data", help="Path to dataset")
+    parser.add_argument("--data_dir", type=str, default="./data/demo", help="Path to dataset")
+    parser.add_argument("--batch_size", "-bs", type=int, default=1, help="The batch size for training and evaluation")
+    
     args = parser.parse_args()
     return args
 
