@@ -37,7 +37,7 @@ class Dataset(paddle.io.Dataset):
             img = img.resize((512, 512))
 
         # img_noise = skimage.util.random_noise(np.asarray(img), mode="gaussian")
-        if random.random() < 0.1:
+        if random.random() > 0.05:
             ksize = int(random.random() * 10) + 1
             img_noise = cv2.blur(np.asarray(img), (ksize, ksize))
         else:

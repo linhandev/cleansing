@@ -10,7 +10,7 @@ from ..util import listdir
 def parse_args():
     parser = argparse.ArgumentParser(description="Predict with SSIM model")
     parser.add_argument("--dataset_path", "-d", type=str, help="Path to image")
-    parser.add_argument("--weight_path", "-w", type=str, default="./model/ckpt/final.pdparams")
+    parser.add_argument("--weight_path", "-w", type=str, default="./model/ssim.pdparams")
     parser.add_argument("--thresh", "-t", default=0.5, type=float)
     args = parser.parse_args()
     return args
