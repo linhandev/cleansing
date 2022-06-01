@@ -17,7 +17,44 @@ kw_total = 0
 i = 0
 
 #
+# for keyword in [
+#     "bicycle",
+#     "car",
+#     "people",
+#     "shoe",
+#     "cat",
+#     "dog",
+#     "children",
+#     "boat",
+#     "mountain",
+#     "sky",
+#     "gpu",
+#     "laptop",
+#     "monitor",
+#     "storm",
+#     "supermoon",
+#     "park",
+#     "yellowstone",
+#     "fish",
+#     "nature",
+#     "party",
+#     "flower",
+# ]:
 for keyword in [
+    "concert",
+    "school",
+    "class",
+    "camera",
+    "mouse",
+    "beach",
+    "fruit",
+    "sunset",
+    "mall",
+    "train",
+    "watch",
+    "selfie",
+    "f1",
+    "bear",
     "bicycle",
     "car",
     "people",
@@ -44,7 +81,7 @@ for keyword in [
     kw_total = 0
     kw_total += i
 
-    print(keyword, ", keyword total", kw_total, ", dataset total", total)
+    # print()
     i = 0
 
     save_dir = osp.join("data", keyword)
@@ -53,7 +90,9 @@ for keyword in [
 
     for page_idx in range(10):
         try:
-            print("page_idx", page_idx)
+            print(
+                keyword, ", keyword total", kw_total, ", dataset total", total, "page_idx", page_idx
+            )
             page = flickr.photos.search(
                 text=keyword,
                 tag_mode="all",
@@ -80,19 +119,19 @@ for keyword in [
                     except:
                         pass
                 sizes.sort(key=lambda s: s[0], reverse=True)
+
                 if sizes[0][0] < 1024:
                     continue
-                # print([s[0] for s in sizes])
+
                 fav_res = flickr.photos.getFavorites(photo_id=photo.get("id"))
-                # print(ET.tostring(fav_res))
-                # print(fav_res.find("photo").get('total'))
                 if fav_res.find("photo").get("total") == 0:
                     continue
 
-                for size in sizes:
-                    if size[0] < 1024:
-                        url = size[1]
-                        break
+                # for size in sizes:
+                #     if size[0] < 1024:
+                #         url = size[1]
+                #         break
+                url = sizes[0][1]
 
                 if url is not None:
                     response = requests.get(url)
@@ -106,9 +145,9 @@ for keyword in [
                     if len(s) != 3:
                         continue
 
-                    img = skimage.transform.resize(
-                        img, (512, 512), order=2, mode="constant", anti_aliasing=True
-                    )
+                    # img = skimage.transform.resize(
+                    #     img, (512, 512), order=2, mode="constant", anti_aliasing=True
+                    # )
 
                     # Convert to uint8, suppress the warning about the precision loss
                     with warnings.catch_warnings():
@@ -124,4 +163,5 @@ for keyword in [
                 print("error", e)
                 time.sleep(5)
 
-            time.sleep(max(2 - (time.time() - tic), 0))  # download at most 3k6/h
+            # print(max(1 - (time.time() - tic), 0))
+            time.sleep(max(1 - (time.time() - tic), 0))  # download at most 3k6/h
